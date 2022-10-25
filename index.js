@@ -1,5 +1,5 @@
-let firstCard = 10;
-let secondCard = 7;
+let firstCard = getRandomCard();
+let secondCard = getRandomCard();
 let cards = [firstCard, secondCard];
 let sum = firstCard + secondCard;
 let hasBlackjack = false;
@@ -10,12 +10,25 @@ let messageEl = document.getElementById("message-el");
 let sumEl = document.getElementById("sum-el");
 let cardsEl = document.getElementById("cards-el");
 
+function getRandomCard() {
+  let randomCard = Math.floor(Math.random() * 13) + 1;
+  return randomCard;
+}
+
+function startGame() {
+  renderGame();
+}
+
 function startGame() {
   renderGame();
 }
 
 function renderGame() {
-  cardsEl.textContent = "Cards: " + cards[0] + " " + cards[1];
+  cardsEl.textContent = "Cards: ";
+  for (let i = 0; i < cards.length; i++) {
+    cardsEl.textContent += cards[i] + " ";
+  }
+
   sumEl.textContent = "Sum: " + sum;
   if (sum <= 20) {
     message = "Do you want to draw a new card?";
@@ -30,19 +43,8 @@ function renderGame() {
 }
 
 function newCard() {
-  console.log("Drawing a new card from the deck!");
-  let card = 5;
+  let card = getRandomCard();
   sum += card;
   cards.push(card);
   renderGame();
 }
-// let messages = ["hej", "co tam", "jest ok"];
-
-// let newMessage = "u mnie też";
-
-// messages.push(newMessage);
-
-// console.log(messages);
-
-// messages.pop();
-// console.log(messages);
