@@ -1,5 +1,6 @@
 body {
 
+
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', Arial, sans-serif;
     background-image: url("images/table.png");
     background-size: cover;
@@ -28,5 +29,7 @@ button {
     border-radius: 2px;
     margin-bottom: 2px;
     margin-top: 2px;
+
 }
+
 
