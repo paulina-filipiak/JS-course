@@ -1,17 +1,56 @@
-let count = 0
-let saveEl = document.getElementById("save-el")
-let countEl = document.getElementById("count-el")
+let myLeads = []
 
-function increment() {
-    count += 1
-    countEl.textContent = count
+const inputEl = document.getElementById("input-el")
+const inputBtn = document.getElementById("input-btn")
+const ulEl = document.getElementById("ul-el")
+const deleteBtn = document.getElementById("delete-btn")
+const tabBtn = document.getElementById("tab-btn")
+
+const leadsFromLocalStorage = JSON.parse(localStorage.getItem("myLeads"))
+
+if (leadsFromLocalStorage) {
+  myLeads = leadsFromLocalStorage
+  render(myLeads)
 }
 
-function save() {
-    let countStr = count + " - "
-    saveEl.textContenttStr
-    countEl.textContent = 0
-    count = 0
-}
+deleteBtn.addEventListener("dblclick", function () {
+  localStorage.clear()
+  myLeads = []
+  render(myLeads)
+})
 
-console.log("Let's count people on the subway!")
+inputBtn.addEventListener("click", function () {
+  myLeads.push(inputEl.value)
+  inputEl.value = ""
+  localStorage.setItem("myLeads", JSON.stringify(myLeads))
+  render(myLeads)
+  console.log(localStorage.getItem("myLeads"))
+})
+
+tabBtn.addEventListener("click", function () {
+  chrome.tabs.query(
+    {
+      active: true,
+      currentWindow: true,
+    },
+    function (tabs) {
+      myLeads.push(tabs[0].url)
+      localStorage.setItem("myLeads", JSON.stringify(myLeads))
+      render(myLeads)
+    },
+  )
+})
+
+function render(leads) {
+  let listItems = ""
+  for (let i = 0; i < leads.length; i++) {
+    listItems += `
+    <li>
+    <a href='${leads[i]}' target='_blank'>
+    ${leads[i]}
+    </a>
+    </li>
+    `
+  }
+  ulEl.innerHTML = listItems
+}
