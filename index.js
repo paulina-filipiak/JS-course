@@ -1,56 +1,65 @@
-let myLeads = []
 
-const inputEl = document.getElementById("input-el")
-const inputBtn = document.getElementById("input-btn")
-const ulEl = document.getElementById("ul-el")
-const deleteBtn = document.getElementById("delete-btn")
-const tabBtn = document.getElementById("tab-btn")
+let player = {
+  name: "Paulina",
+  chips: 145,
+};
+let cards = [];
+let sum = 0;
+let hasBlackjack = false;
+let isAlive = false;
 
-const leadsFromLocalStorage = JSON.parse(localStorage.getItem("myLeads"))
+let message = "";
+let messageEl = document.getElementById("message-el");
+let sumEl = document.getElementById("sum-el");
+let cardsEl = document.getElementById("cards-el");
+let playerEl = document.getElementById("player-el");
 
-if (leadsFromLocalStorage) {
-  myLeads = leadsFromLocalStorage
-  render(myLeads)
-}
+playerEl.innerText = player.name + " $" + player.chips;
 
-deleteBtn.addEventListener("dblclick", function () {
-  localStorage.clear()
-  myLeads = []
-  render(myLeads)
-})
-
-inputBtn.addEventListener("click", function () {
-  myLeads.push(inputEl.value)
-  inputEl.value = ""
-  localStorage.setItem("myLeads", JSON.stringify(myLeads))
-  render(myLeads)
-  console.log(localStorage.getItem("myLeads"))
-})
-
-tabBtn.addEventListener("click", function () {
-  chrome.tabs.query(
-    {
-      active: true,
-      currentWindow: true,
-    },
-    function (tabs) {
-      myLeads.push(tabs[0].url)
-      localStorage.setItem("myLeads", JSON.stringify(myLeads))
-      render(myLeads)
-    },
-  )
-})
-
-function render(leads) {
-  let listItems = ""
-  for (let i = 0; i < leads.length; i++) {
-    listItems += `
-    <li>
-    <a href='${leads[i]}' target='_blank'>
-    ${leads[i]}
-    </a>
-    </li>
-    `
+function getRandomCard() {
+  let randomCard = Math.floor(Math.random() * 13) + 1;
+  if (randomCard === 1) {
+    randomCard = 11;
+  } else if (randomCard >= 11) {
+    randomCard = 10;
   }
-  ulEl.innerHTML = listItems
+  return randomCard;
 }
+
+function startGame() {
+  isAlive = true;
+  let firstCard = getRandomCard();
+  let secondCard = getRandomCard();
+  cards = [firstCard, secondCard];
+  sum = firstCard + secondCard;
+  renderGame();
+}
+
+function renderGame() {
+  cardsEl.textContent = "Cards: ";
+  for (let i = 0; i < cards.length; i++) {
+    cardsEl.textContent += cards[i] + " ";
+  }
+
+  sumEl.textContent = "Sum: " + sum;
+  if (sum <= 20) {
+    message = "Do you want to draw a new card?";
+  } else if (sum === 21) {
+    message = "You've got blackjack!";
+    hasBlackjack = true;
+  } else {
+    message = "You are out of the game";
+    isAlive = false;
+  }
+  messageEl.textContent = message;
+}
+
+function newCard() {
+  if (isAlive === true && hasBlackjack === false) {
+    let card = getRandomCard();
+    sum += card;
+    cards.push(card);
+    renderGame();
+  }
+
+
